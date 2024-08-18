@@ -1,0 +1,131 @@
+<html><head><base ><title>Block Wall Designer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .input-group {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-bottom: 5px;
+        color: #555;
+      }
+      input {
+        width: 100px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #wall {
+        border: 2px solid #333;
+        margin-top: 20px;
+      }
+      #stats {
+        margin-top: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Block Wall Designer</h1>
+      <div class="controls">
+        <div class="input-group">
+          <label for="wallWidth">Wall Width (cm):</label>
+          <input type="number" id="wallWidth" value="200" min="1">
+        </div>
+        <div class="input-group">
+          <label for="wallHeight">Wall Height (cm):</label>
+          <input type="number" id="wallHeight" value="150" min="1">
+        </div>
+        <div class="input-group">
+          <label for="variationPercentage">Block Width Variation (%):</label>
+          <input type="number" id="variationPercentage" value="10" min="0" max="50">
+        </div>
+        <button onclick="generateWall()">Generate Wall</button>
+      </div>
+      <svg id="wall"></svg>
+      <div id="stats"></div>
+    </div>
+  
+    <script>
+      const BLOCK_WIDTH = 44.3;
+      const BLOCK_HEIGHT = 12.1;
+  
+      function generateWall() {
+        const wallWidth = parseFloat(document.getElementById('wallWidth').value);
+        const wallHeight = parseFloat(document.getElementById('wallHeight').value);
+        const variationPercentage = parseFloat(document.getElementById('variationPercentage').value) / 100;
+  
+        const svg = document.getElementById('wall');
+        svg.innerHTML = '';
+        svg.setAttribute('width', wallWidth);
+        svg.setAttribute('height', wallHeight);
+  
+        let currentY = 0;
+        let blockCount = 0;
+  
+        while (currentY < wallHeight) {
+          let currentX = 0;
+          while (currentX < wallWidth) {
+            const variation = (Math.random() - 0.5) * 2 * variationPercentage * BLOCK_WIDTH;
+            const blockWidth = Math.max(BLOCK_WIDTH + variation, 10); // Ensure minimum width of 10cm
+            
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', currentX);
+            rect.setAttribute('y', currentY);
+            rect.setAttribute('width', Math.min(blockWidth, wallWidth - currentX));
+            rect.setAttribute('height', BLOCK_HEIGHT);
+            rect.setAttribute('fill', 'none');
+            rect.setAttribute('stroke', '#333');
+            rect.setAttribute('stroke-width', '0.5');
+            svg.appendChild(rect);
+  
+            currentX += blockWidth;
+            blockCount++;
+          }
+          currentY += BLOCK_HEIGHT;
+        }
+  
+        const stats = document.getElementById('stats');
+        stats.textContent = `Total blocks used: ${blockCount}`;
+      }
+  
+      // Initial wall generation
+      generateWall();
+    </script>
+  </body></html>
